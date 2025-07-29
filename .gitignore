@@ -5,12 +5,12 @@ __pycache__/
 *.pyo
 
 # Log files
-data/ErrorLog.log # Specific log file you mentioned
+app/data/ErrorLog.log # Specific log file you mentioned
 
 # Temporary or generated files
-data/seen_listings.txt # If this is dynamically generated and not essential to track history
-discord.txt          # If this contains sensitive info or is temporary
-links.txt            # If this is temporary or generated
+app/data/seen_listings.txt # If this is dynamically generated and not essential to track history
+app/discord.txt          # If this contains sensitive info or is temporary
+app/links.txt            # If this is temporary or generated
 
 
 # Environment variables
