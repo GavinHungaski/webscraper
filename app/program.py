@@ -1,10 +1,10 @@
 from ui import ScraperUI
-import tkinter as tk
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from datetime import datetime
 from bs4 import BeautifulSoup
+import tkinter as tk
 import logging
 import requests
 import logging
