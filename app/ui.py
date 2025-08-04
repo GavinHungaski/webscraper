@@ -19,7 +19,7 @@ class ScraperUI:
         self.links = self.get_links()
         self.master = master
         if self.master:
-            self.master.title("Craigslist Scraper V1.0")
+            self.master.title("Craigslist Scraper V0.2.0")
             try:
                 self.master.wm_iconbitmap("./data/diamond_icon.ico")
             except tk.TclError:

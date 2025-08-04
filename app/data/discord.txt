@@ -1,2 +1,2 @@
-discord_url=aksdg
-discord_auth=sfgknsfdg
+discord_url=
+discord_auth=
