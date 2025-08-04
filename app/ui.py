@@ -168,7 +168,7 @@ class ScraperUI:
                 self.write_to_info("Starting up . . .\n")
                 self.scraper_running = True
                 self.scrape_thread = threading.Thread(
-                    target=self.scraper_function, args=(self,))
+                    target=self.scraper_function, args=())
                 self.scrape_thread.daemon = True
                 self.scrape_thread.start()
             else:
