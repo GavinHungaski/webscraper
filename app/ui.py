@@ -5,16 +5,6 @@ import threading
 import os
 
 
-def get_discord_login(file_path = 'data/discord.txt'):
-    result = {'discord_url': '', 'discord_auth': ''}
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
-            for line in f:
-                key, value = line.strip().split('=', 1)
-                result[key] = value
-    return result
-
-
 class ScraperUI:
     def __init__(
             self,
@@ -23,8 +13,7 @@ class ScraperUI:
         ) -> None:
         self.sleep_time = 10
         self.scraper_running = False
-        self.discord_settings = get_discord_login()
-        print(self.discord_settings["discord_url"])
+        self.discord_settings = self.get_discord_login()
         self.discord_url_var = tk.StringVar(value=self.discord_settings["discord_url"])
         self.discord_auth_var = tk.StringVar(value=self.discord_settings["discord_auth"])
         self.links = []
@@ -141,6 +130,7 @@ class ScraperUI:
             self.links_input.config(state="normal")
         elif current_text == "Done":
             self.input_edit_button.config(text="Edit")
+            self.save_discord_login()
             self.discord_url_input.config(state="disabled")
             self.discord_auth_input.config(state="disabled")
             self.links_input.config(state="disabled")
@@ -188,3 +178,19 @@ class ScraperUI:
         except FileNotFoundError:
             self.write_to_info(f"File {file_path} not found.")
             return []
+        
+
+    #  Get and save discord info
+    def get_discord_login(self, file_path='data/discord.txt'):
+        result = {'discord_url': '', 'discord_auth': ''}
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                for line in f:
+                    key, value = line.strip().split('=', 1)
+                    result[key] = value
+        return result
+
+    def save_discord_login(self, file_path='data/discord.txt'):
+        with open(file_path, 'w') as f:
+            f.write(f"discord_url={self.discord_url_var.get()}\n")
+            f.write(f"discord_auth={self.discord_auth_var.get()}\n")
