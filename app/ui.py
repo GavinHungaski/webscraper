@@ -1,30 +1,50 @@
 from tkinter import scrolledtext
 import tkinter as tk
+from typing import Optional, Callable
 import threading
 
 
 class ScraperUI:
-    def __init__(self, master=None, scraper_function=None):
+    def __init__(
+            self,
+            master=None,
+            scraper_function: Optional[Callable]=None
+        ) -> None:
         self.sleep_time = 10
         self.scraper_running = False
         self.master = master
-        self.master.wm_iconbitmap("./data/diamond_icon.ico")
-        self.master.title("Craigslist Scraper V1.0")
-        self.frame = tk.Frame(self.master)
-        self.frame.pack(fill="both", expand=True)
+        if self.master:
+            self.master.title("Craigslist Scraper V1.0")
+            try:
+                self.master.wm_iconbitmap("./data/diamond_icon.ico")
+            except tk.TclError:
+                print("Warning: Icon file 'diamond.ico' not found")
+        self._create_widgets()
 
-        self.text_area_frame = tk.Frame(self.frame)
+    def _create_widgets(self) -> None:
+        # Main Frame Setup
+        self.main_frame = tk.Frame(self.master)
+        self.main_frame.pack(fill="both", expand=True)
+        
+        # Text Area Frame
+        self.text_area_frame = tk.Frame(self.main_frame)
         self.text_area_frame.pack(fill="both", expand=True)
 
         self.info_text_area = scrolledtext.ScrolledText(
-            self.text_area_frame, width=40, height=20)
-        self.info_text_area.pack(side="left", fill="both", expand=True)
-        self.info_text_area.config(state="disabled")
+            self.text_area_frame,
+            width=40,
+            height=20,
+            state="disabled",
+            wrap="word",
+            bg="#2e2e2e",
+            fg="white"
+            )
+        self.info_text_area.pack(fill="both", expand=True)
 
-        self.ui_frame = tk.Frame(self.text_area_frame)
-        self.ui_frame.pack(side="right", fill="both", expand=True)
+        self.control_panel_frame = tk.Frame(self.main_frame, width=200)
+        self.control_panel_frame.pack(side="right", fill="both", expand=True)
 
-        self.time_entry_frame = tk.Frame(self.ui_frame)
+        self.time_entry_frame = tk.Frame(self.control_panel_frame)
         self.time_entry_frame.pack(side="top", padx=25, pady=25)
 
         self.time_label = tk.Label(
@@ -43,7 +63,7 @@ class ScraperUI:
         self.set_time_button.pack(side="right")
 
         self.toggle_button = tk.Button(
-            self.ui_frame, text="Start", command=self.start)
+            self.control_panel_frame, text="Start", command=self.start)
         self.toggle_button.pack(side="left")
 
     def set_sleep_time(self):
