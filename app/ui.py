@@ -2,9 +2,18 @@ from tkinter import scrolledtext
 from typing import Optional, Callable
 import tkinter as tk
 import threading
+import os
 
-def get_discord_login():
-    return "one", "two"
+
+def get_discord_login(file_path = 'data/discord.txt'):
+    result = {'discord_url': '', 'discord_auth': ''}
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            for line in f:
+                key, value = line.strip().split('=', 1)
+                result[key] = value
+    return result
+
 
 class ScraperUI:
     def __init__(

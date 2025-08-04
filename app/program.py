@@ -12,8 +12,7 @@ import time
 
 def initialize():
     logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
-    files_to_create = ['./links.txt', './discord.txt',
-                       './data/seen_listings.txt']
+    files_to_create = ['./data/seen_listings.txt']
     for file in files_to_create:
         try:
             with open(file, 'x') as _:
@@ -28,7 +27,7 @@ def main():
     root.mainloop()
 
 # Basic info 
-def get_discord_login(file_path='./discord.txt'):
+def get_discord_login(file_path='./data/discord.txt'):
     try:
         with open(file_path, 'r') as file:
             channel_url = file.readline()
