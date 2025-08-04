@@ -20,12 +20,6 @@ def initialize():
         except FileExistsError:
             pass
 
-def main():
-    initialize()
-    root = tk.Tk()
-    _ = ScraperUI(master=root, scraper_function=scrape_and_send)
-    root.mainloop()
-
 # Basic info 
 def get_discord_login(file_path='./data/discord.txt'):
     try:
@@ -106,20 +100,16 @@ def get_cars(soup):
     cars = []
     for div in soup.find_all('div', {"class": "gallery-card"}):
         car = {}
-
         link = div.find('a').get('href').strip()
         car['link'] = link
-
         title = div.find('span', class_='label')
         if title:
             title = title.text.strip()
             car['title'] = title
-
         price = div.find('span', class_='priceinfo')
         if price:
             price = price.text.strip()
             car['price'] = price
-
         info = div.find('div', class_='meta')
         if info:
             info = info.text.strip()
@@ -127,7 +117,6 @@ def get_cars(soup):
             car['date'] = date
             odometer = get_odometer(date, info)
             car['odometer'] = f"{odometer} mi"
-
         cars.append(car)
     return cars
 
@@ -143,7 +132,6 @@ def get_date(info):
 def get_odometer(date, info):
     info = info.replace(date, "").split()
     return info[0]
-
 
 # Discord communication
 def send_discord_message(message):
@@ -170,6 +158,12 @@ def construct_payload(car):
         message = None
     return message
 
+
+def main():
+    initialize()
+    root = tk.Tk()
+    _ = ScraperUI(master=root, scraper_function=scrape_and_send)
+    root.mainloop()
 
 if __name__ == "__main__":
     main()

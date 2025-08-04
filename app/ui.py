@@ -4,7 +4,6 @@ import tkinter as tk
 import threading
 import os
 
-
 class ScraperUI:
     def __init__(
             self,
