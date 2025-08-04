@@ -13,10 +13,11 @@ class ScraperUI:
         ) -> None:
         self.sleep_time = 10
         self.scraper_running = False
+        self.scraper_function = scraper_function
         self.discord_settings = self.get_discord_login()
         self.discord_url_var = tk.StringVar(value=self.discord_settings["discord_url"])
         self.discord_auth_var = tk.StringVar(value=self.discord_settings["discord_auth"])
-        self.links = []
+        self.links = self.get_links()
         self.master = master
         if self.master:
             self.master.title("Craigslist Scraper V1.0")
@@ -25,6 +26,7 @@ class ScraperUI:
             except tk.TclError:
                 print("Warning: Icon file 'diamond.ico' not found")
         self._create_widgets()
+        self._set_initial_links()
 
     def _create_widgets(self) -> None:
         # Main Frame Setup
@@ -121,6 +123,13 @@ class ScraperUI:
             )
         self.start_button.pack(pady=20, ipadx=10, ipady=5)
 
+    def _set_initial_links(self):
+        self.links_input.config(state="normal")
+        self.links_input.delete("1.0", tk.END)
+        for link in self.links:
+            self.links_input.insert(tk.END, link + "\n")
+        self.links_input.config(state="disabled")
+
     def edit_inputs(self):
         current_text = self.input_edit_button.cget("text")
         if current_text == "Edit":
@@ -131,6 +140,7 @@ class ScraperUI:
         elif current_text == "Done":
             self.input_edit_button.config(text="Edit")
             self.save_discord_login()
+            self.save_links()
             self.discord_url_input.config(state="disabled")
             self.discord_auth_input.config(state="disabled")
             self.links_input.config(state="disabled")
@@ -168,16 +178,6 @@ class ScraperUI:
         else:
             self.write_to_info(
                 "Already running . . .")
-
-    def get_links(self, file_path='./data/links.txt'):
-        try:
-            with open(file_path, 'r') as file:
-                links = file.read()
-                links = links.splitlines()
-            return links
-        except FileNotFoundError:
-            self.write_to_info(f"File {file_path} not found.")
-            return []
         
 
     # Get and save discord info
@@ -195,10 +195,20 @@ class ScraperUI:
             f.write(f"discord_url={self.discord_url_var.get()}\n")
             f.write(f"discord_auth={self.discord_auth_var.get()}\n")
 
-
     # Get and Save links
     def get_links(self, file_path='data/links.txt'):
-        pass
+        result = []
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                for line in f:
+                    link = line.strip()
+                    if link:
+                        result.append(link)
+        return result
 
     def save_links(self, file_path='data/links.txt'):
-        pass
+        links_text = self.links_input.get("1.0", tk.END).strip()
+        self.links = [link.strip() for link in links_text.split('\n') if link.strip()]
+        with open(file_path, 'w') as f:
+            for item in self.links:
+                f.write(f"{item}\n")

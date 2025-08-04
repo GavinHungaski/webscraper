@@ -1,2 +1,2 @@
-discord_url=hello
-discord_auth=world
+discord_url=
+discord_auth=
