@@ -43,7 +43,6 @@ def add_seen_listing(listing_id):
     with open('./data/seen_listings.txt', 'a') as file:
         file.write(f"{listing_id}\n")
 
-
 # Scraper logic
 def scrape_and_send():
         while True:
@@ -157,7 +156,6 @@ def construct_payload(car):
         ScraperUI.write_to_info(f"Error: {e}")
         message = None
     return message
-
 
 def main():
     initialize()
