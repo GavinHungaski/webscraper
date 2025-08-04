@@ -1,8 +1,10 @@
 from tkinter import scrolledtext
-import tkinter as tk
 from typing import Optional, Callable
+import tkinter as tk
 import threading
 
+def get_discord_login():
+    return "one", "two"
 
 class ScraperUI:
     def __init__(
@@ -12,6 +14,10 @@ class ScraperUI:
         ) -> None:
         self.sleep_time = 10
         self.scraper_running = False
+        self.discord_url, self.discord_auth = get_discord_login()
+        self.discord_url_var = tk.StringVar(value=self.discord_url)
+        self.discord_auth_var = tk.StringVar(value=self.discord_auth)
+        self.links = []
         self.master = master
         if self.master:
             self.master.title("Craigslist Scraper V1.0")
@@ -58,12 +64,22 @@ class ScraperUI:
 
         self.discord_url_label = tk.Label(self.input_frame, text="Discord URL:")
         self.discord_url_label.grid(row=1, column=0, sticky="w")
-        self.discord_url_input = tk.Entry(self.input_frame, width=15, state="disabled")
+        self.discord_url_input = tk.Entry(
+            self.input_frame,
+            width=15,
+            state="disabled",
+            textvariable=self.discord_url_var
+            )
         self.discord_url_input.grid(row=1, column=1)
 
         self.discord_auth_label = tk.Label(self.input_frame, text="Discord Auth:")
         self.discord_auth_label.grid(row=2, column=0, sticky="w")
-        self.discord_auth_input = tk.Entry(self.input_frame, width=15, state="disabled")
+        self.discord_auth_input = tk.Entry(
+            self.input_frame,
+            width=15,
+            state="disabled",
+            textvariable=self.discord_auth_var
+            )
         self.discord_auth_input.grid(row=2, column=1)
 
         self.links_label = tk.Label(self.input_frame, text="Links:")
@@ -112,10 +128,12 @@ class ScraperUI:
             self.input_edit_button.config(text="Done")
             self.discord_url_input.config(state="normal")
             self.discord_auth_input.config(state="normal")
+            self.links_input.config(state="normal")
         elif current_text == "Done":
             self.input_edit_button.config(text="Edit")
             self.discord_url_input.config(state="disabled")
             self.discord_auth_input.config(state="disabled")
+            self.links_input.config(state="disabled")
 
     def set_sleep_time(self):
         try:
