@@ -2,10 +2,8 @@
 A webscraper for Craigslist Car and Truck searches
 
 ## Configure
-When the program starts up it will create two relevant files: discord.txt and links.txt
+When the program starts up you must input your target discord channel url and authorization token in the appropriate inputs.
 
-You must paste each link to be scraped as a single line in the links.txt
+To scrape craigslist navigate to your target page and copy and paste the url into the links input.
 
-You must paste the discord channel url where the scraped listings are to be sent on line 1 of discord.txt
-
-You must paste the Authorization token for the discord channel on line 2 of discord.txt
+You can scrape any number of links.

@@ -180,7 +180,7 @@ class ScraperUI:
             return []
         
 
-    #  Get and save discord info
+    # Get and save discord info
     def get_discord_login(self, file_path='data/discord.txt'):
         result = {'discord_url': '', 'discord_auth': ''}
         if os.path.exists(file_path):
@@ -194,3 +194,11 @@ class ScraperUI:
         with open(file_path, 'w') as f:
             f.write(f"discord_url={self.discord_url_var.get()}\n")
             f.write(f"discord_auth={self.discord_auth_var.get()}\n")
+
+
+    # Get and Save links
+    def get_links(self, file_path='data/links.txt'):
+        pass
+
+    def save_links(self, file_path='data/links.txt'):
+        pass
