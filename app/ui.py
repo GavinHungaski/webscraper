@@ -41,9 +41,11 @@ class ScraperUI:
             )
         self.info_text_area.pack(fill="both", expand=True)
 
+        # Control Panel Frame
         self.control_panel_frame = tk.Frame(self.main_frame, width=200)
         self.control_panel_frame.pack(side="right", fill="both", expand=True)
 
+        # Time Entry and Label Frame
         self.time_entry_frame = tk.Frame(self.control_panel_frame)
         self.time_entry_frame.pack(side="top", padx=25, pady=25)
 
@@ -62,9 +64,16 @@ class ScraperUI:
             self.time_entry_frame, text="Set", command=self.set_sleep_time)
         self.set_time_button.pack(side="right")
 
+        # Start Button
         self.toggle_button = tk.Button(
-            self.control_panel_frame, text="Start", command=self.start)
-        self.toggle_button.pack(side="left")
+            self.control_panel_frame,
+            text="Start",
+            command=self.start,
+            font=("Arial", 11),
+            bg="#4CAF50",
+            activebackground="#45a049"
+            )
+        self.toggle_button.pack(pady=20, ipadx=10, ipady=5)
 
     def set_sleep_time(self):
         try:
