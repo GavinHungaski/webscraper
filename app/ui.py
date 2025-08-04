@@ -23,9 +23,10 @@ class ScraperUI:
         ) -> None:
         self.sleep_time = 10
         self.scraper_running = False
-        self.discord_url, self.discord_auth = get_discord_login()
-        self.discord_url_var = tk.StringVar(value=self.discord_url)
-        self.discord_auth_var = tk.StringVar(value=self.discord_auth)
+        self.discord_settings = get_discord_login()
+        print(self.discord_settings["discord_url"])
+        self.discord_url_var = tk.StringVar(value=self.discord_settings["discord_url"])
+        self.discord_auth_var = tk.StringVar(value=self.discord_settings["discord_auth"])
         self.links = []
         self.master = master
         if self.master:

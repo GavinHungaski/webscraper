@@ -1,2 +1,2 @@
-discord_url = 
-discord_auth = 
+discord_url=hi
+discord_auth=bobby
