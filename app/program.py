@@ -20,15 +20,21 @@ def initialize():
         except FileExistsError:
             pass
 
+def main():
+    initialize()
+    root = tk.Tk()
+    app = ScraperUI(master=root, scraper_function=scrape_and_send)
+    root.mainloop()
+
 # Basic info 
-def get_discord_login(file_path='./data/discord.txt'):
+def get_discord_login(app, file_path='./data/discord.txt'):
     try:
         with open(file_path, 'r') as file:
             _, channel_url = file.readline().strip().split('=', 1)
             _, auth = file.readline().strip().split('=', 1)
         return channel_url, auth
     except Exception as e:
-        ScraperUI.write_to_info(f"\nError: {e}")
+        app.write_to_info(f"\nError: {e}")
         return
 
 def get_seen_listings(file_path='./data/seen_listings.txt'):
@@ -44,44 +50,45 @@ def add_seen_listing(listing_id):
         file.write(f"{listing_id}\n")
 
 # Scraper logic
-def scrape_and_send():
+def scrape_and_send(app):
         while True:
             try:
                 seen_listings = get_seen_listings()
-                ScraperUI.write_to_info("Getting links . . .\n")
-                links = ScraperUI.get_links()
+                app.write_to_info("Getting links . . .\n")
+                links = app.get_links()
                 for link in links:
-                    ScraperUI.write_to_info(f"Now scraping: \n{link}")
-                    cars = scrape_craigslist(link)
-                    ScraperUI.write_to_info(
+                    app.write_to_info(f"Now scraping: \n{link}")
+                    cars = scrape_craigslist(app, link)
+                    app.write_to_info(
                         f"Finished scraping @ {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                     )
                     for car in cars:
                         listing_id = car['link'].split('/')[-1]
                         if listing_id not in seen_listings:
-                            ScraperUI.write_to_info(
+                            app.write_to_info(
                                 f"\nNew listing found: {listing_id}, sending to discord.")
-                            message = construct_payload(car)
-                            send_discord_message(message)
+                            message = construct_payload(app, car)
+                            send_discord_message(app, message)
                             add_seen_listing(listing_id)
-                ScraperUI.write_to_info(
-                    f"\nNow waiting {ScraperUI.sleep_time} minutes until next scrape . . .")
-                time.sleep(ScraperUI.sleep_time * 60)
+                app.write_to_info(
+                    f"\nNow waiting {app.sleep_time} minutes until next scrape . . .")
+                time.sleep(app.sleep_time * 60)
             except Exception as e:
                 logging.error(f"An error occurred: {e}")
+                app.write_to_info(f"An error occurred in the scraper thread: {e}")
                 return
 
-def scrape_craigslist(link):
+def scrape_craigslist(app, link):
     try:
         content = get_html_selenium(link)
         soup = BeautifulSoup(content, 'html.parser')
         cars = get_cars(soup)
         return cars
     except requests.exceptions.RequestException as e:
-        ScraperUI.write_to_info(f"Error during web request: {e}")
+        app.write_to_info(f"Error during web request: {e}")
         return None
     except Exception as e:
-        ScraperUI.write_to_info(f"An error occurred: {e}")
+        app.write_to_info(f"An error occurred: {e}")
         return None
 
 def get_html_selenium(url):
@@ -133,9 +140,9 @@ def get_odometer(date, info):
     return info[0]
 
 # Discord communication
-def send_discord_message(message):
-    ScraperUI.write_to_info(message)
-    channel_url, auth = get_discord_login()
+def send_discord_message(app, message):
+    app.write_to_info(message)
+    channel_url, auth = get_discord_login(app)
     payload = {"content": message}
     headers = {"Authorization": auth}
     response = requests.post(
@@ -143,7 +150,7 @@ def send_discord_message(message):
     if response.status_code != 200:
         logging.error(f"Failed to send Discord message: {response.text}")
 
-def construct_payload(car):
+def construct_payload(app, car):
     try:
         message = (
             f"Title: {car.get('title', 'Not Available')}\n"
@@ -153,15 +160,9 @@ def construct_payload(car):
             f"Link: {car.get('link', 'Not Available')}"
         )
     except Exception as e:
-        ScraperUI.write_to_info(f"Error: {e}")
+        app.write_to_info(f"Error: {e}")
         message = None
     return message
-
-def main():
-    initialize()
-    root = tk.Tk()
-    _ = ScraperUI(master=root, scraper_function=scrape_and_send)
-    root.mainloop()
 
 if __name__ == "__main__":
     main()

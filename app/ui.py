@@ -89,7 +89,7 @@ class ScraperUI:
             width=15,
             height=5,
             state="disabled",
-            wrap="word"
+            wrap="none"
         )
         self.links_input.grid(row=3, column=1)
 
@@ -168,7 +168,7 @@ class ScraperUI:
                 self.write_to_info("Starting up . . .\n")
                 self.scraper_running = True
                 self.scrape_thread = threading.Thread(
-                    target=self.scraper_function, args=())
+                    target=self.scraper_function, args=(self,))
                 self.scrape_thread.daemon = True
                 self.scrape_thread.start()
             else:
