@@ -45,6 +45,38 @@ class ScraperUI:
         self.control_panel_frame = tk.Frame(self.main_frame, width=200)
         self.control_panel_frame.pack(side="right", fill="both", expand=True)
 
+        # Input Frame
+        self.input_frame = tk.Frame(self.control_panel_frame)
+        self.input_frame.pack(side="left", fill="both", expand=True)
+
+        self.input_edit_button = tk.Button(
+            self.input_frame,
+            text="Edit",
+            command=self.edit_inputs,
+        )
+        self.input_edit_button.grid(row=0, column=1)
+
+        self.discord_url_label = tk.Label(self.input_frame, text="Discord URL:")
+        self.discord_url_label.grid(row=1, column=0, sticky="w")
+        self.discord_url_input = tk.Entry(self.input_frame, width=15, state="disabled")
+        self.discord_url_input.grid(row=1, column=1)
+
+        self.discord_auth_label = tk.Label(self.input_frame, text="Discord Auth:")
+        self.discord_auth_label.grid(row=2, column=0, sticky="w")
+        self.discord_auth_input = tk.Entry(self.input_frame, width=15, state="disabled")
+        self.discord_auth_input.grid(row=2, column=1)
+
+        self.links_label = tk.Label(self.input_frame, text="Links:")
+        self.links_label.grid(row=3, column=0, sticky="w")
+        self.links_input = scrolledtext.ScrolledText(
+            self.input_frame,
+            width=15,
+            height=5,
+            state="disabled",
+            wrap="word"
+        )
+        self.links_input.grid(row=3, column=1)
+
         # Time Entry and Label Frame
         self.time_entry_frame = tk.Frame(self.control_panel_frame)
         self.time_entry_frame.pack(side="top", padx=25, pady=25)
@@ -65,15 +97,25 @@ class ScraperUI:
         self.set_time_button.pack(side="right")
 
         # Start Button
-        self.toggle_button = tk.Button(
+        self.start_button = tk.Button(
             self.control_panel_frame,
             text="Start",
             command=self.start,
-            font=("Arial", 11),
             bg="#4CAF50",
             activebackground="#45a049"
             )
-        self.toggle_button.pack(pady=20, ipadx=10, ipady=5)
+        self.start_button.pack(pady=20, ipadx=10, ipady=5)
+
+    def edit_inputs(self):
+        current_text = self.input_edit_button.cget("text")
+        if current_text == "Edit":
+            self.input_edit_button.config(text="Done")
+            self.discord_url_input.config(state="normal")
+            self.discord_auth_input.config(state="normal")
+        elif current_text == "Done":
+            self.input_edit_button.config(text="Edit")
+            self.discord_url_input.config(state="disabled")
+            self.discord_auth_input.config(state="disabled")
 
     def set_sleep_time(self):
         try:
