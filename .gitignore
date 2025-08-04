@@ -9,8 +9,8 @@ app/data/ErrorLog.log
 
 # Temporary or generated files
 app/data/seen_listings.txt
-app/discord.txt
-app/links.txt
+app/data/discord.txt
+app/data/links.txt
 
 # Environment variables
 venv/
