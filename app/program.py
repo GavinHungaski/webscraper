@@ -30,8 +30,8 @@ def main():
 def get_discord_login(file_path='./data/discord.txt'):
     try:
         with open(file_path, 'r') as file:
-            channel_url = file.readline()
-            auth = file.readline()
+            _, channel_url = file.readline().strip().split('=', 1)
+            _, auth = file.readline().strip().split('=', 1)
         return channel_url, auth
     except Exception as e:
         ScraperUI.write_to_info(f"\nError: {e}")

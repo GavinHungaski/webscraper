@@ -169,7 +169,7 @@ class ScraperUI:
             self.write_to_info(
                 "Already running . . .")
 
-    def get_links(self, file_path='./links.txt'):
+    def get_links(self, file_path='./data/links.txt'):
         try:
             with open(file_path, 'r') as file:
                 links = file.read()
