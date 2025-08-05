@@ -1,6 +1,6 @@
 from tkinter import scrolledtext
 from typing import Optional, Callable
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 import tkinter as tk
 import threading
 import os
@@ -180,7 +180,6 @@ class ScraperUI:
             self.write_to_info(
                 "Already running . . .")
         
-
     # Get and save discord info
     def get_discord_login(self, file_path='data/discord.txt'):
         result = {'discord_url': '', 'discord_auth': ''}
@@ -196,9 +195,20 @@ class ScraperUI:
             f.write(f"discord_url={self.discord_url_var.get()}\n")
             f.write(f"discord_auth={self.discord_auth_var.get()}\n")
 
-    def save_links(self, file_path='data/links.txt'):
+    def save_links(self):
         links_text = self.links_input.get("1.0", tk.END).strip()
-        self.links = [link.strip() for link in links_text.split('\n') if link.strip()]
-        with open(file_path, 'w') as f:
-            for item in self.links:
-                f.write(f"{item}\n")
+        new_links = {link.strip() for link in links_text.split('\n') if link.strip()}
+        try:
+            existing_links = {doc['url'] for doc in self.links_table.al()}
+        except KeyError:
+            self.write_to_info("Warning: A document in the links table is missing a 'url' key.")
+        links_to_delete = existing_links - new_links
+        if links_to_delete:
+            query = Query()
+            self.links_table.remove(query.url.one_of(links_to_delete))
+            self.write_to_info(f"Deleted {len(links_to_delete)} links that are no longer present.")
+        links_to_add = new_links - existing_links
+        if links_to_add:
+            new_link_docs = [{'url': link} for link in links_to_add]
+            self.links_table.insert_multiple(new_link_docs)
+            self.write_to_info(f"Added {len(links_to_add)} new links.")
