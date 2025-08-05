@@ -10,18 +10,8 @@ import requests
 import logging
 import time
 
-def initialize():
-    logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
-    files_to_create = ['./data/seen_listings.txt']
-    for file in files_to_create:
-        try:
-            with open(file, 'x') as _:
-                pass
-        except FileExistsError:
-            pass
-
 def main():
-    initialize()
+    logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
     root = tk.Tk()
     app = ScraperUI(master=root, scraper_function=scrape_and_send)
     root.mainloop()
