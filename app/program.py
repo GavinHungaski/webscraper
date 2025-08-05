@@ -41,7 +41,7 @@ def get_discord_login(app, file_path='./data/discord.txt'):
 def scrape_and_send(app, links_table, listings_table):
         while True:
             try:
-                seen_listing_ids = {doc['listing_id'] for doc in listings_table.all()}
+                seen_listing_ids = {doc['listing'] for doc in listings_table.all()}
                 app.write_to_info("Getting links . . .\n")
                 links = links_table.all()
                 for link in links:

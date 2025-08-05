@@ -166,7 +166,7 @@ class ScraperUI:
 
     def start(self):
         if not self.scraper_running:
-            if len(self.get_links()) > 0:
+            if len(self.links_table.all()) > 0:
                 self.write_to_info("Starting up . . .\n")
                 self.scraper_running = True
                 self.scrape_thread = threading.Thread(
