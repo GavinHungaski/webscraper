@@ -38,26 +38,28 @@ def get_discord_login(app, file_path='./data/discord.txt'):
         return
 
 # Scraper logic
-def scrape_and_send(app):
+def scrape_and_send(app, links_table, listings_table):
         while True:
             try:
-                seen_listings = get_seen_listings()
+                seen_listing_ids = {doc['listing_id'] for doc in listings_table.all()}
                 app.write_to_info("Getting links . . .\n")
-                links = app.get_links()
+                links = links_table.all()
                 for link in links:
-                    app.write_to_info(f"Now scraping: \n{link}")
-                    cars = scrape_craigslist(app, link)
+                    app.write_to_info(f"Now scraping: \n{link['url']}")
+                    cars = scrape_craigslist(app, link['url'])
                     app.write_to_info(
                         f"Finished scraping @ {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                     )
-                    for car in cars:
-                        listing_id = car['link'].split('/')[-1]
-                        if listing_id not in seen_listings:
-                            app.write_to_info(
-                                f"\nNew listing found: {listing_id}, sending to discord.")
-                            message = construct_payload(app, car)
-                            send_discord_message(app, message)
-                            add_seen_listing(listing_id)
+                    if cars:
+                        for car in cars:
+                            listing_id = car['link'].split('/')[-1]
+                            if listing_id not in seen_listing_ids:
+                                app.write_to_info(
+                                    f"\nNew listing found: {listing_id}, sending to discord.")
+                                message = construct_payload(app, car)
+                                send_discord_message(app, message)
+                                listings_table.insert({'listing': listing_id})
+                                seen_listing_ids.add(listing_id)
                 app.write_to_info(
                     f"\nNow waiting {app.sleep_time} minutes until next scrape . . .")
                 time.sleep(app.sleep_time * 60)
