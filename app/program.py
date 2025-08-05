@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 from datetime import datetime
 from bs4 import BeautifulSoup
+from tinydb import TinyDB
 import tkinter as tk
 import logging
 import requests
@@ -11,9 +12,18 @@ import logging
 import time
 
 def main():
+    # Create a log file for errors
     logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
+    # define the scraper class
     root = tk.Tk()
-    app = ScraperUI(master=root, scraper_function=scrape_and_send)
+    app = ScraperUI(master=root)
+    # define the database variables
+    db = TinyDB('db.json')
+    listings_table = db.table('seen_listings')
+    links_table = db.table('links')
+    scraper_callable = lambda *args: scrape_and_send(app=app, links_table=links_table, listings_table=listings_table)
+    app.scraper_function = scraper_callable
+    # start the scraper mainloop
     root.mainloop()
 
 # Basic info 
@@ -26,18 +36,6 @@ def get_discord_login(app, file_path='./data/discord.txt'):
     except Exception as e:
         app.write_to_info(f"\nError: {e}")
         return
-
-def get_seen_listings(file_path='./data/seen_listings.txt'):
-    try:
-        with open(file_path, 'r') as file:
-            seen_listings = file.read().splitlines()
-        return seen_listings
-    except FileNotFoundError:
-        return []
-
-def add_seen_listing(listing_id):
-    with open('./data/seen_listings.txt', 'a') as file:
-        file.write(f"{listing_id}\n")
 
 # Scraper logic
 def scrape_and_send(app):
