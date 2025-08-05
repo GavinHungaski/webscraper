@@ -1,5 +1,6 @@
 from tkinter import scrolledtext
 from typing import Optional, Callable
+from tinydb import TinyDB
 import tkinter as tk
 import threading
 import os
@@ -16,7 +17,8 @@ class ScraperUI:
         self.discord_settings = self.get_discord_login()
         self.discord_url_var = tk.StringVar(value=self.discord_settings["discord_url"])
         self.discord_auth_var = tk.StringVar(value=self.discord_settings["discord_auth"])
-        self.links = self.get_links()
+        self.db = TinyDB('db.json')
+        self.links_table = self.db.table('links')
         self.master = master
         if self.master:
             self.master.title("Craigslist Scraper V0.2.0")
@@ -125,8 +127,8 @@ class ScraperUI:
     def _set_initial_links(self):
         self.links_input.config(state="normal")
         self.links_input.delete("1.0", tk.END)
-        for link in self.links:
-            self.links_input.insert(tk.END, link + "\n")
+        for link in self.links_table.all():
+            self.links_input.insert(tk.END, link['url'] + "\n")
         self.links_input.config(state="disabled")
 
     def edit_inputs(self):
