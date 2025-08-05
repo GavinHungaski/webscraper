@@ -196,17 +196,6 @@ class ScraperUI:
             f.write(f"discord_url={self.discord_url_var.get()}\n")
             f.write(f"discord_auth={self.discord_auth_var.get()}\n")
 
-    # Get and Save links
-    def get_links(self, file_path='data/links.txt'):
-        result = []
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                for line in f:
-                    link = line.strip()
-                    if link:
-                        result.append(link)
-        return result
-
     def save_links(self, file_path='data/links.txt'):
         links_text = self.links_input.get("1.0", tk.END).strip()
         self.links = [link.strip() for link in links_text.split('\n') if link.strip()]
