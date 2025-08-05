@@ -12,18 +12,14 @@ import logging
 import time
 
 def main():
-    # Create a log file for errors
     logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
-    # define the scraper class
     root = tk.Tk()
     app = ScraperUI(master=root)
-    # define the database variables
     db = TinyDB('db.json')
     listings_table = db.table('seen_listings')
     links_table = db.table('links')
     scraper_callable = lambda *args: scrape_and_send(app=app, links_table=links_table, listings_table=listings_table)
     app.scraper_function = scraper_callable
-    # start the scraper mainloop
     root.mainloop()
 
 # Basic info 
