@@ -199,7 +199,7 @@ class ScraperUI:
         links_text = self.links_input.get("1.0", tk.END).strip()
         new_links = {link.strip() for link in links_text.split('\n') if link.strip()}
         try:
-            existing_links = {doc['url'] for doc in self.links_table.al()}
+            existing_links = {doc['url'] for doc in self.links_table.all()}
         except KeyError:
             self.write_to_info("Warning: A document in the links table is missing a 'url' key.")
         links_to_delete = existing_links - new_links
