@@ -12,3 +12,13 @@ app/db.json
 
 # Environment variables
 venv/
+
+# Pyinstaller
+# Build folder
+/build/
+
+# Dist folder containing executable
+/dist/
+
+# the .spec file for custom configs
+*.spec
