@@ -1,2 +1,0 @@
-discord_url=
-discord_auth=

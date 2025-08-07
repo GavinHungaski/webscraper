@@ -7,8 +7,5 @@ __pycache__/
 # Log files
 app/data/ErrorLog.log
 
-# Temporary or generated files
-app/data/seen_listings.txt
-
 # Environment variables
 venv/

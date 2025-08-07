@@ -13,12 +13,13 @@ import time
 
 def main():
     logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
-    root = tk.Tk()
-    app = ScraperUI(master=root)
     db = TinyDB('db.json')
     listings_table = db.table('seen_listings')
     links_table = db.table('links')
-    scraper_callable = lambda *args: scrape_and_send(app=app, links_table=links_table, listings_table=listings_table)
+    discord_table = db.table('discord')
+    root = tk.Tk()
+    app = ScraperUI(master=root)
+    scraper_callable = lambda *args: scrape_and_send(app=app, discord_table=discord_table, links_table=links_table, listings_table=listings_table)
     app.scraper_function = scraper_callable
     root.mainloop()
 
