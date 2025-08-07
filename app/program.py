@@ -23,19 +23,8 @@ def main():
     app.scraper_function = scraper_callable
     root.mainloop()
 
-# Basic info 
-def get_discord_login(app, file_path='./data/discord.txt'):
-    try:
-        with open(file_path, 'r') as file:
-            _, channel_url = file.readline().strip().split('=', 1)
-            _, auth = file.readline().strip().split('=', 1)
-        return channel_url, auth
-    except Exception as e:
-        app.write_to_info(f"\nError: {e}")
-        return
-
 # Scraper logic
-def scrape_and_send(app, links_table, listings_table):
+def scrape_and_send(app, discord_table, links_table, listings_table):
         while True:
             try:
                 seen_listing_ids = {doc['listing'] for doc in listings_table.all()}
@@ -54,7 +43,7 @@ def scrape_and_send(app, links_table, listings_table):
                                 app.write_to_info(
                                     f"\nNew listing found: {listing_id}, sending to discord.")
                                 message = construct_payload(app, car)
-                                send_discord_message(app, message)
+                                send_discord_message(app, message, discord_table)
                                 listings_table.insert({'listing': listing_id})
                                 seen_listing_ids.add(listing_id)
                 app.write_to_info(
@@ -127,9 +116,13 @@ def get_odometer(date, info):
     return info[0]
 
 # Discord communication
-def send_discord_message(app, message):
+def send_discord_message(app, message, discord_table):
     app.write_to_info(message)
-    channel_url, auth = get_discord_login(app)
+    discord_settings = discord_table.all()
+    if discord_settings:
+        discord_data = discord_settings[0]
+        channel_url = discord_data.get("channel_url")
+        auth = discord_data.get("auth_token")
     payload = {"content": message}
     headers = {"Authorization": auth}
     response = requests.post(

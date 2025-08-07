@@ -3,7 +3,6 @@ from typing import Optional, Callable
 from tinydb import TinyDB, Query
 import tkinter as tk
 import threading
-import os
 
 class ScraperUI:
     def __init__(
@@ -14,11 +13,17 @@ class ScraperUI:
         self.sleep_time = 10
         self.scraper_running = False
         self.scraper_function = scraper_function
-        self.discord_settings = self.get_discord_login()
-        self.discord_url_var = tk.StringVar(value=self.discord_settings["discord_url"])
-        self.discord_auth_var = tk.StringVar(value=self.discord_settings["discord_auth"])
         self.db = TinyDB('db.json')
         self.links_table = self.db.table('links')
+        self.discord_table = self.db.table('discord')
+        self.discord_settings = self.discord_table.all()
+        if self.discord_settings:
+            discord_data = self.discord_settings[0]
+            self.discord_url_var = tk.StringVar(value=discord_data.get("channel_url"))
+            self.discord_auth_var = tk.StringVar(value=discord_data.get("auth_token"))
+        else:
+            self.discord_url_var = tk.StringVar(value="")
+            self.discord_auth_var = tk.StringVar(value="")
         self.master = master
         if self.master:
             self.master.title("Craigslist Scraper V0.2.0")
@@ -140,7 +145,8 @@ class ScraperUI:
             self.links_input.config(state="normal")
         elif current_text == "Done":
             self.input_edit_button.config(text="Edit")
-            self.save_discord_login()
+            self.discord_table.truncate()
+            self.discord_table.insert({'channel_url': self.discord_url_var.get(), 'auth_token': self.discord_auth_var.get()})
             self.save_links()
             self.discord_url_input.config(state="disabled")
             self.discord_auth_input.config(state="disabled")
@@ -179,21 +185,6 @@ class ScraperUI:
         else:
             self.write_to_info(
                 "Already running . . .")
-        
-    # Get and save discord info
-    def get_discord_login(self, file_path='data/discord.txt'):
-        result = {'discord_url': '', 'discord_auth': ''}
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                for line in f:
-                    key, value = line.strip().split('=', 1)
-                    result[key] = value
-        return result
-
-    def save_discord_login(self, file_path='data/discord.txt'):
-        with open(file_path, 'w') as f:
-            f.write(f"discord_url={self.discord_url_var.get()}\n")
-            f.write(f"discord_auth={self.discord_auth_var.get()}\n")
 
     def save_links(self):
         links_text = self.links_input.get("1.0", tk.END).strip()
