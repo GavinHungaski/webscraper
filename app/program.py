@@ -8,7 +8,6 @@ from tinydb import TinyDB
 import tkinter as tk
 import logging
 import requests
-import logging
 import time
 
 def main():
@@ -34,7 +33,7 @@ def scrape_and_send(app, discord_table, links_table, listings_table):
                     app.write_to_info(f"Now scraping: \n{link['url']}")
                     cars = scrape_craigslist(app, link['url'])
                     app.write_to_info(
-                        f"Finished scraping @ {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
+                        f"Finished scraping @ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                     )
                     if cars:
                         for car in cars:
@@ -113,7 +112,7 @@ def get_date(info):
 
 def get_odometer(date, info):
     info = info.replace(date, "").split()
-    return info[0]
+    return info[0] if info else "Unknown"
 
 # Discord communication
 def send_discord_message(app, message, discord_table):
