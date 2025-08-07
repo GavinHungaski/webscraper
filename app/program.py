@@ -9,9 +9,11 @@ import tkinter as tk
 import logging
 import requests
 import time
+import sys
+import os
 
 def main():
-    logging.basicConfig(filename='./data/ErrorLog.log', level=logging.ERROR)
+    logging.basicConfig(filename=get_resource_path(os.path.join("data", "ErrorLog.log")), level=logging.ERROR)
     db = TinyDB('db.json')
     listings_table = db.table('seen_listings')
     links_table = db.table('links')
@@ -21,6 +23,13 @@ def main():
     scraper_callable = lambda *args: scrape_and_send(app=app, discord_table=discord_table, links_table=links_table, listings_table=listings_table)
     app.scraper_function = scraper_callable
     root.mainloop()
+
+def get_resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 # Scraper logic
 def scrape_and_send(app, discord_table, links_table, listings_table):
